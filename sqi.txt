@@ -1,0 +1,49 @@
+-- حذف الجداول إن وجدت
+DROP TABLE IF EXISTS votes;
+DROP TABLE IF EXISTS stations;
+DROP TABLE IF EXISTS centers;
+DROP TABLE IF EXISTS candidates;
+DROP TABLE IF EXISTS users;
+
+-- إنشاء جدول المستخدمين
+CREATE TABLE users (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  fullname VARCHAR(255) NOT NULL,
+  username VARCHAR(100) NOT NULL UNIQUE,
+  password VARCHAR(255) NOT NULL,
+  password_enc VARCHAR(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- إنشاء جدول المراكز
+CREATE TABLE centers (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  center_name VARCHAR(255) NOT NULL UNIQUE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- إنشاء جدول المحطات
+CREATE TABLE stations (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  center_id INT NOT NULL,
+  station_number INT NOT NULL,
+  UNIQUE (center_id, station_number),
+  FOREIGN KEY (center_id) REFERENCES centers(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- إنشاء جدول المرشحين
+CREATE TABLE candidates (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  candidate_name VARCHAR(255) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+-- إنشاء جدول الأصوات
+CREATE TABLE votes (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  candidate_id INT NOT NULL,
+  center_id INT NOT NULL,
+  station_id INT NOT NULL,
+  vote_count INT NOT NULL DEFAULT 0,
+  UNIQUE (candidate_id, center_id, station_id),
+  FOREIGN KEY (candidate_id) REFERENCES candidates(id) ON DELETE CASCADE,
+  FOREIGN KEY (center_id) REFERENCES centers(id) ON DELETE CASCADE,
+  FOREIGN KEY (station_id) REFERENCES stations(id) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
